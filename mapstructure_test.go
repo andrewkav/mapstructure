@@ -1915,6 +1915,23 @@ func TestWeakDecodeMetadata(t *testing.T) {
 	}
 }
 
+func TestOmitempty(t *testing.T) {
+	type omitemptyTest struct {
+		Slice []string `mapstructure:"slice,omitempty"`
+	}
+
+	result := map[string][]string{}
+
+	err := Decode(omitemptyTest{}, &result)
+	if err != nil {
+		t.Fatalf("got error: %s", err)
+	}
+	_, ok := result["slice"]
+	if ok {
+		t.Fatal("expected slice to not present in the map")
+	}
+}
+
 func testSliceInput(t *testing.T, input map[string]interface{}, expected *Slice) {
 	var result Slice
 	err := Decode(input, &result)

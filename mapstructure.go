@@ -700,6 +700,17 @@ func (d *Decoder) decodeMapFromStruct(name string, dataVal reflect.Value, val re
 		if squash && v.Kind() != reflect.Struct {
 			return fmt.Errorf("cannot squash non-struct type '%s'", v.Type())
 		}
+		omitEmpty := false
+		for _, tag := range tagParts[1:] {
+			if tag == "omitempty" {
+				omitEmpty = true
+				break
+			}
+		}
+
+		if omitEmpty && v.IsNil() {
+			continue
+		}
 
 		switch v.Kind() {
 		// this is an embedded struct, so handle it differently
